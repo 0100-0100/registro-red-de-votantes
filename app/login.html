@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar Sesión - Registro red de votantes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
+
+    
+<style>      .htmx-indicator{opacity:0}      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      </style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+</head>
+<body data-demo-page="login">
+<div class="demo-banner" style="background:#fff3cd;color:#664d03;font-size:.85rem;padding:.45rem 1rem;text-align:center"><strong>DEMO</strong> · Datos ficticios. Lo que escriba no se envía ni se consulta en la Registraduría. <a href="../index.html" class="link-dark fw-semibold">Menú de la demo</a></div>
+    
+
+    
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Iniciar Sesión</h4>
+
+                        
+
+                        
+
+                        <form method="post">
+
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Cédula</label>
+                                <input type="text" name="username" class="form-control" id="id_username" placeholder="Ingrese su cédula" pattern="[0-9]{6,10}" maxlength="10" inputmode="numeric" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="La cédula debe tener entre 6 y 10 dígitos numéricos" data-bs-original-title="La cédula debe tener entre 6 y 10 dígitos numéricos">
+                                <div class="invalid-feedback">
+                                    La cédula debe tener entre 6 y 10 dígitos numéricos
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_password" class="form-label">Contraseña</label>
+                                <input type="password" name="password" class="form-control" id="id_password" placeholder="Ingrese su contraseña" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="Ingrese su contraseña" data-bs-original-title="Ingrese su contraseña">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese su contraseña
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="remember_me" value="1" id="remember_me">
+                                <label class="form-check-label" for="remember_me">
+                                    Recuérdame (mantener sesión por 14 días)
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+
+                            <div class="text-center">
+                                <p class="mb-0">
+                                    ¿No tienes cuenta? <a href="registro.html" class="text-decoration-none">Crea una aquí</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    
+<script>
+(function() {
+    'use strict';
+
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Debounce function - validates after user stops typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Validate cédula field (6-10 numeric digits)
+    function validateCedula(input) {
+        const value = input.value.trim();
+        const isValid = /^[0-9]{6,10}$/.test(value);
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            // Don't show error for empty field until form submit
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate password field (not empty)
+    function validatePassword(input) {
+        const value = input.value;
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+    }
+
+    // Get form fields
+    const cedulaField = document.getElementById('id_username');
+    const passwordField = document.getElementById('id_password');
+
+    // Add debounced validation listeners (1.5 seconds after last keypress)
+    if (cedulaField) {
+        const debouncedCedulaValidation = debounce(function() {
+            validateCedula(cedulaField);
+        }, 1500);
+
+        // Filter non-numeric input and enforce max 10 digits
+        cedulaField.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            const numericOnly = this.value.replace(/[^0-9]/g, '');
+            // Limit to 10 characters
+            this.value = numericOnly.slice(0, 10);
+            // Trigger debounced validation
+            debouncedCedulaValidation();
+        });
+
+        cedulaField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') {
+                validateCedula(this);
+            }
+        });
+
+        // Prevent non-numeric keys from being entered
+        cedulaField.addEventListener('keypress', function(e) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].includes(e.keyCode)) {
+                return;
+            }
+            // Block if not a number (0-9)
+            if (e.key < '0' || e.key > '9') {
+                e.preventDefault();
+            }
+        });
+
+        // Handle paste events - filter non-numeric
+        cedulaField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            const currentValue = this.value;
+            const newValue = (currentValue + numericOnly).slice(0, 10);
+            this.value = newValue;
+            debouncedCedulaValidation();
+        });
+    }
+
+    if (passwordField) {
+        const debouncedPasswordValidation = debounce(function() {
+            validatePassword(passwordField);
+        }, 1500);
+
+        passwordField.addEventListener('input', debouncedPasswordValidation);
+        passwordField.addEventListener('blur', function() {
+            if (this.value !== '') {
+                validatePassword(this);
+            }
+        });
+    }
+
+    // Validate on form submit
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            if (cedulaField) {
+                validateCedula(cedulaField);
+                if (cedulaField.classList.contains('is-invalid') || cedulaField.value.trim() === '') {
+                    if (cedulaField.value.trim() === '') {
+                        cedulaField.classList.add('is-invalid');
+                    }
+                    isValid = false;
+                }
+            }
+
+            if (passwordField && passwordField.value === '') {
+                passwordField.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    }
+})();
+</script>
+
+
+
+<script src="demo.js"></script>
+</body></html>

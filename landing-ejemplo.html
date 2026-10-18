@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Borrador de página para su grupo · Registro red de votantes</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  /* Wireframe: greys for structure, the app's blue only on actions */
+  :root {
+    --wf-bg: #ffffff;
+    --wf-block: #e9ecef;
+    --wf-block-2: #dee2e6;
+    --wf-line: #adb5bd;
+    --wf-ink: #343a40;
+    --wf-muted: #6c757d;
+    --wf-action: #0d6efd;
+    --wf-note: #fff3cd;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); color: var(--wf-ink); background: var(--wf-bg); line-height: 1.45; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .ribbon { background: var(--wf-note); color: #664d03; font-size: 13px; text-align: center; padding-block: 6px; letter-spacing: .04em; }
+  .ribbon strong { letter-spacing: .08em; }
+
+  header { border-bottom: 2px dashed var(--wf-line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .logo-box { width: 44px; height: 44px; border: 2px dashed var(--wf-line); border-radius: 10px; display: grid; place-items: center; font-size: 10px; color: var(--wf-muted); }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; color: var(--wf-muted); font-size: 15px; }
+  nav .menu-btn { display: none; font-size: 26px; color: var(--wf-muted); }
+
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; padding-block: 48px; }
+  .eyebrow { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--wf-muted); border: 1px solid var(--wf-line); border-radius: 999px; padding: 4px 12px; }
+  h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 14px 0; text-wrap: balance; }
+  h1 .ph { background: var(--wf-block); border-radius: 6px; padding: 0 8px; }
+  .lead { font-size: 18px; color: var(--wf-muted); margin: 0 0 24px; max-width: 34em; }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 16px; text-decoration: none; border: 2px solid var(--wf-action); }
+  .btn-primary { background: var(--wf-action); color: #fff; }
+  .btn-ghost { color: var(--wf-action); background: transparent; }
+  .img-ph { aspect-ratio: 4 / 3; max-width: 100%; border: 2px dashed var(--wf-line); border-radius: 16px; background:
+      linear-gradient(to top right, transparent calc(50% - 1px), var(--wf-block-2) 50%, transparent calc(50% + 1px)),
+      linear-gradient(to top left, transparent calc(50% - 1px), var(--wf-block-2) 50%, transparent calc(50% + 1px)),
+      var(--wf-block);
+    display: grid; place-items: center; color: var(--wf-muted); font-size: 14px; }
+  .img-ph span { background: var(--wf-block); padding: 4px 10px; border-radius: 6px; }
+
+  section { padding-block: 40px; }
+  section.alt { background: #f8f9fa; border-block: 1px solid var(--wf-block-2); }
+  h2 { font-size: 26px; margin: 0 0 6px; }
+  .sub { color: var(--wf-muted); margin: 0 0 24px; }
+
+  .events { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .event { border: 1px solid var(--wf-line); border-radius: 12px; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+  .event .date { font-size: 13px; font-weight: 700; color: var(--wf-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .event .bar { height: 10px; border-radius: 4px; background: var(--wf-block); }
+  .event .bar.short { width: 60%; }
+  .soon { align-self: flex-start; margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--wf-muted); border: 1px dashed var(--wf-line); border-radius: 8px; padding: 6px 10px; }
+  .soon b { background: var(--wf-note); color: #664d03; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+  .join { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .form { border: 2px solid var(--wf-ink); border-radius: 14px; padding: 22px; background: #fff; display: flex; flex-direction: column; gap: 14px; }
+  .form label { font-size: 14px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
+  .form .input { height: 44px; border: 1px solid var(--wf-line); border-radius: 8px; padding: 10px 12px; color: var(--wf-muted); font-weight: 400; font-size: 15px; }
+  .form .check { display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 400; color: var(--wf-muted); }
+  .form .check i { font-size: 18px; color: var(--wf-action); }
+  .form .btn { justify-content: center; }
+  .trust { display: flex; gap: 12px; padding: 14px; border-radius: 10px; background: #e7f1ff; color: #084298; font-size: 14px; }
+  .trust i { font-size: 22px; }
+  .points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .points li { display: flex; gap: 12px; }
+  .points i { color: var(--wf-action); font-size: 20px; }
+
+  .leader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border: 2px dashed var(--wf-line); border-radius: 14px; padding: 22px; }
+  footer { border-top: 2px dashed var(--wf-line); color: var(--wf-muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-block: 22px; }
+
+  @media (max-width: 760px) {
+    nav ul { display: none; }
+    nav .menu-btn { display: block; }
+    .hero .wrap, .join { grid-template-columns: 1fr; gap: 24px; }
+    .hero .wrap { padding-block: 28px; }
+    .events { grid-template-columns: 1fr; }
+    section { padding-block: 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="ribbon"><strong>BORRADOR</strong> · Ejemplo de página para un grupo, con el registro de Registro red de votantes integrado</div>
+
+  <header>
+    <div class="wrap">
+      <div class="logo"><div class="logo-box">LOGO</div> [Nombre del grupo]</div>
+      <nav aria-label="Menú">
+        <ul><li>Quiénes somos</li><li>Encuentros</li><li>Únete</li></ul>
+        <i class="bi bi-list menu-btn" aria-hidden="true"></i>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Movimiento ciudadano</span>
+        <h1>Únete a la red de <span class="ph">[Nombre del grupo]</span></h1>
+        <p class="lead">Regístrate en un minuto. Te contamos de los próximos encuentros en tu barrio y te ayudamos a saber dónde votas.</p>
+        <div class="btns">
+          <a class="btn btn-primary" href="#unete"><i class="bi bi-person-plus"></i> Quiero registrarme</a>
+          <a class="btn btn-ghost" href="#encuentros"><i class="bi bi-calendar-event"></i> Ver encuentros</a>
+        </div>
+      </div>
+      <div class="img-ph"><span>Foto del grupo o del candidato</span></div>
+    </div>
+  </div>
+
+  <section class="alt" id="encuentros">
+    <div class="wrap">
+      <h2>Próximos encuentros</h2>
+      <p class="sub">Reuniones, recorridos y eventos del grupo.</p>
+      <div class="events">
+        <div class="event"><span class="date">[Sábado 7 nov · 9:00 a. m.]</span><strong>[Nombre del encuentro]</strong><div class="bar"></div><div class="bar short"></div><span class="soon"><i class="bi bi-check2-square"></i> Confirmar asistencia <b>Próximamente</b></span></div>
+        <div class="event"><span class="date">[Jueves 12 nov · 6:00 p. m.]</span><strong>[Nombre del encuentro]</strong><div class="bar"></div><div class="bar short"></div><span class="soon"><i class="bi bi-check2-square"></i> Confirmar asistencia <b>Próximamente</b></span></div>
+        <div class="event"><span class="date">[Domingo 15 nov · 10:00 a. m.]</span><strong>[Nombre del encuentro]</strong><div class="bar"></div><div class="bar short"></div><span class="soon"><i class="bi bi-check2-square"></i> Confirmar asistencia <b>Próximamente</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="unete">
+    <div class="wrap join">
+      <div>
+        <h2>Regístrate</h2>
+        <p class="sub">Tus datos llegan directo a la red del grupo.</p>
+        <ul class="points">
+          <li><i class="bi bi-shield-check"></i><span>Validamos tu cédula con la consulta pública de la Registraduría y te mostramos tu puesto y mesa de votación.</span></li>
+          <li><i class="bi bi-people"></i><span>Si te invitó un líder, quedas en su red automáticamente.</span></li>
+          <li><i class="bi bi-phone"></i><span>Funciona desde cualquier celular o computador.</span></li>
+        </ul>
+      </div>
+      <form class="form" action="app/registro.html" method="get">
+        <label>Cédula <span class="input">Número de cédula</span></label>
+        <label>Nombre completo <span class="input">Nombre completo</span></label>
+        <label>Celular <span class="input">Número de celular</span></label>
+        <span class="check"><i class="bi bi-check-square-fill"></i> Acepto la política de tratamiento de datos</span>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-person-plus"></i> Unirme a la red</button>
+        <div class="trust"><i class="bi bi-patch-check"></i><span>Formulario de Registro red de votantes. Tu cédula se verifica de forma automática.</span></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="leader">
+        <div><h2>¿Eres líder?</h2><p class="sub" style="margin:0">Recibe tu propio enlace y mira en tiempo real quién de tu red ya está verificado.</p></div>
+        <a class="btn btn-ghost" href="app/inicio.html"><i class="bi bi-link-45deg"></i> Pedir mi enlace</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap"><span>[Nombre del grupo] · [Ciudad]</span><span>Política de tratamiento de datos · Contacto</span></div>
+  </footer>
+</body>
+</html>

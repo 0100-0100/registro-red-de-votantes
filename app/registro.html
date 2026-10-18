@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crear Cuenta - Registro red de votantes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
+
+    
+<style>      .htmx-indicator{opacity:0}      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      </style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+</head>
+<body data-demo-page="registro">
+<div class="demo-banner" style="background:#fff3cd;color:#664d03;font-size:.85rem;padding:.45rem 1rem;text-align:center"><strong>DEMO</strong> · Datos ficticios. Lo que escriba no se envía ni se consulta en la Registraduría. <a href="../index.html" class="link-dark fw-semibold">Menú de la demo</a></div>
+    
+
+    
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Crear Cuenta</h4>
+
+                        
+
+                        
+
+                        <form method="post" novalidate="">
+
+                            <div class="mb-3">
+                                <label for="id_cedula" class="form-label">Cédula</label>
+                                <input type="text" name="cedula" class="form-control" id="id_cedula" placeholder="Número de cédula" pattern="[0-9]{6,10}" maxlength="10" inputmode="numeric" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="La cédula debe tener entre 6 y 10 dígitos numéricos" data-bs-original-title="La cédula debe tener entre 6 y 10 dígitos numéricos">
+                                <div class="invalid-feedback">
+                                    La cédula debe tener entre 6 y 10 dígitos numéricos
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_nombre_completo" class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_completo" class="form-control" id="id_nombre_completo" placeholder="Nombre completo" maxlength="60" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="Solo letras y espacios, máximo 60 caracteres (se permiten tildes: áéíóúñü)" data-bs-original-title="Solo letras y espacios, máximo 60 caracteres (se permiten tildes: áéíóúñü)">
+                                <div class="invalid-feedback">
+                                    Solo letras y espacios, máximo 60 caracteres
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_phone" class="form-label">Teléfono</label>
+                                <input type="text" name="phone" class="form-control" id="id_phone" placeholder="Número de teléfono" pattern="[0-9]{10}" maxlength="10" inputmode="numeric" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="El teléfono debe tener 10 dígitos numéricos" data-bs-original-title="El teléfono debe tener 10 dígitos numéricos">
+                                <div class="invalid-feedback">
+                                    El teléfono debe tener 10 dígitos numéricos
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label">Contraseña</label>
+                                <input type="password" name="password1" class="form-control" id="id_password1" placeholder="Contraseña" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="La contraseña debe tener al menos 8 caracteres" data-bs-original-title="La contraseña debe tener al menos 8 caracteres">
+                                <div class="invalid-feedback">
+                                    Por favor ingrese una contraseña
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_password2" class="form-label">Confirmar Contraseña</label>
+                                <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Confirmar contraseña" data-bs-toggle="tooltip" data-bs-placement="right" required="" aria-label="Repita la contraseña para confirmar" data-bs-original-title="Repita la contraseña para confirmar">
+                                <div class="invalid-feedback">
+                                    Por favor confirme su contraseña
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="id_data_policy_accepted" name="data_policy_accepted" required="">
+                                <label class="form-check-label" for="id_data_policy_accepted">
+                                    Acepto la <a href="#" class="text-decoration-none">política de datos</a>
+                                </label>
+                                
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Crear Cuenta</button>
+
+                            <div class="text-center">
+                                <p class="mb-0">
+                                    ¿Ya tienes cuenta? <a href="login.html" class="text-decoration-none">Inicia sesión aquí</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    
+<script>
+(function() {
+    'use strict';
+
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Debounce function - validates after user stops typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Validate cédula field (6-10 numeric digits)
+    function validateCedula(input) {
+        const value = input.value.trim();
+        const isValid = /^[0-9]{6,10}$/.test(value);
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate phone field (10 numeric digits)
+    function validatePhone(input) {
+        const value = input.value.trim();
+        const isValid = /^[0-9]{10}$/.test(value);
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate nombre field (letters, spaces, accented chars only, max 60)
+    function validateNombre(input) {
+        const value = input.value.trim();
+        // Allow letters (including Spanish accented: áéíóúñüÁÉÍÓÚÑÜ), spaces, and common name chars like hyphen and apostrophe
+        const isValid = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]+$/.test(value) && value.length >= 2 && value.length <= 60;
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate password (min 8 characters)
+    function validatePassword(input) {
+        const value = input.value;
+        const isEmpty = value === '';
+        const isValid = value.length >= 8;
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate password confirmation
+    function validatePasswordConfirm(input, password1) {
+        const value = input.value;
+        const isEmpty = value === '';
+        const isValid = value === password1.value && value.length > 0;
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Filter numeric input helper
+    function filterNumericInput(input, maxLength) {
+        const numericOnly = input.value.replace(/[^0-9]/g, '');
+        input.value = numericOnly.slice(0, maxLength);
+    }
+
+    // Get form fields
+    const cedulaField = document.getElementById('id_cedula');
+    const nombreField = document.getElementById('id_nombre_completo');
+    const phoneField = document.getElementById('id_phone');
+    const password1Field = document.getElementById('id_password1');
+    const password2Field = document.getElementById('id_password2');
+
+    // Setup cédula field (6-10 numeric digits)
+    if (cedulaField) {
+        const debouncedValidation = debounce(() => validateCedula(cedulaField), 1500);
+
+        cedulaField.addEventListener('input', function() {
+            filterNumericInput(this, 10);
+            debouncedValidation();
+        });
+
+        cedulaField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validateCedula(this);
+        });
+
+        cedulaField.addEventListener('keypress', function(e) {
+            if (e.key < '0' || e.key > '9') e.preventDefault();
+        });
+
+        cedulaField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            this.value = (this.value + numericOnly).slice(0, 10);
+            debouncedValidation();
+        });
+    }
+
+    // Setup nombre field (letters, spaces, Spanish accents only, max 60)
+    if (nombreField) {
+        const debouncedValidation = debounce(() => validateNombre(nombreField), 1500);
+
+        // Filter invalid characters on input
+        nombreField.addEventListener('input', function() {
+            // Remove numbers and special characters, keep letters, accents, spaces, hyphens, apostrophes
+            const filtered = this.value.replace(/[^a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]/g, '');
+            // Limit to 60 characters
+            this.value = filtered.slice(0, 60);
+            debouncedValidation();
+        });
+
+        nombreField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validateNombre(this);
+        });
+
+        // Block invalid characters on keypress
+        nombreField.addEventListener('keypress', function(e) {
+            const char = e.key;
+            // Allow letters (including accented), space, hyphen, apostrophe
+            const validChar = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]$/.test(char);
+            if (!validChar && char.length === 1) {
+                e.preventDefault();
+            }
+        });
+
+        // Handle paste - filter invalid characters
+        nombreField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = pastedText.replace(/[^a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]/g, '').slice(0, 60);
+            const currentValue = this.value;
+            const newValue = (currentValue + filtered).slice(0, 60);
+            this.value = newValue;
+            debouncedValidation();
+        });
+    }
+
+    // Setup phone field (10 numeric digits)
+    if (phoneField) {
+        const debouncedValidation = debounce(() => validatePhone(phoneField), 1500);
+
+        phoneField.addEventListener('input', function() {
+            filterNumericInput(this, 10);
+            debouncedValidation();
+        });
+
+        phoneField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validatePhone(this);
+        });
+
+        phoneField.addEventListener('keypress', function(e) {
+            if (e.key < '0' || e.key > '9') e.preventDefault();
+        });
+
+        phoneField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            this.value = (this.value + numericOnly).slice(0, 10);
+            debouncedValidation();
+        });
+    }
+
+    // Setup password1 field
+    if (password1Field) {
+        const debouncedValidation = debounce(() => validatePassword(password1Field), 1500);
+        password1Field.addEventListener('input', debouncedValidation);
+        password1Field.addEventListener('blur', function() {
+            if (this.value !== '') validatePassword(this);
+        });
+    }
+
+    // Setup password2 field
+    if (password2Field && password1Field) {
+        const debouncedValidation = debounce(() => validatePasswordConfirm(password2Field, password1Field), 1500);
+        password2Field.addEventListener('input', debouncedValidation);
+        password2Field.addEventListener('blur', function() {
+            if (this.value !== '') validatePasswordConfirm(this, password1Field);
+        });
+    }
+
+    // Validate on form submit
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            if (cedulaField) {
+                validateCedula(cedulaField);
+                if (cedulaField.classList.contains('is-invalid') || cedulaField.value.trim() === '') {
+                    if (cedulaField.value.trim() === '') cedulaField.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (nombreField) {
+                validateNombre(nombreField);
+                if (nombreField.classList.contains('is-invalid') || nombreField.value.trim() === '') {
+                    if (nombreField.value.trim() === '') nombreField.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (phoneField) {
+                validatePhone(phoneField);
+                if (phoneField.classList.contains('is-invalid') || phoneField.value.trim() === '') {
+                    if (phoneField.value.trim() === '') phoneField.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (password1Field) {
+                validatePassword(password1Field);
+                if (password1Field.classList.contains('is-invalid') || password1Field.value === '') {
+                    if (password1Field.value === '') password1Field.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (password2Field && password1Field) {
+                validatePasswordConfirm(password2Field, password1Field);
+                if (password2Field.classList.contains('is-invalid') || password2Field.value === '') {
+                    if (password2Field.value === '') password2Field.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    }
+})();
+</script>
+
+
+
+<script src="demo.js"></script>
+</body></html>

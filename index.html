@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro red de votantes · Demo</title>
+<meta name="description" content="Construya su red de apoyo y compruebe, de forma automática, que cada persona registrada puede votar y dónde vota.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
+<style>
+  .hero-title { font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; text-wrap: balance; }
+  .hero-title span { color: var(--bs-primary); }
+  .opcion { transition: transform .15s ease, box-shadow .15s ease; }
+  .opcion:hover { transform: translateY(-2px); box-shadow: 0 .75rem 1.5rem rgba(13, 110, 253, .12) !important; }
+  .opcion .icono { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--bs-primary-bg-subtle); color: var(--bs-primary); font-size: 1.6rem; }
+  .etiqueta { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  @media (prefers-reduced-motion: reduce) { .opcion { transition: none; } .opcion:hover { transform: none; } }
+</style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container"><span class="navbar-brand">Registro red de votantes</span><span class="badge text-bg-warning">Demo</span></div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <span class="etiqueta text-primary">Demo interactiva</span>
+        <h1 class="hero-title mt-2 mb-3">Registro <span>red de votantes</span></h1>
+        <p class="lead text-secondary mb-4">Construya su red de apoyo y compruebe, de forma automática, que cada persona registrada puede votar y dónde vota.</p>
+        <div class="alert alert-warning d-flex gap-2 small" role="note">
+          <i class="bi bi-info-circle"></i>
+          <span>Esta demo usa personas ficticias y simula la validación en su navegador. Lo que escriba no se envía a ningún lado ni se consulta en la Registraduría.</span>
+        </div>
+
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <a href="app/registro.html" class="card opcion h-100 shadow-sm text-decoration-none text-body">
+              <div class="card-body p-4 d-flex flex-column gap-3">
+                <div class="icono"><i class="bi bi-person-plus"></i></div>
+                <div><h2 class="h5 mb-1">Regístrese como una persona nueva</h2><p class="text-secondary mb-0">Llene el formulario como lo haría alguien invitado por un líder, y vea cómo se valida la cédula.</p></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="app/login.html" class="card opcion h-100 shadow-sm text-decoration-none text-body">
+              <div class="card-body p-4 d-flex flex-column gap-3">
+                <div class="icono"><i class="bi bi-people"></i></div>
+                <div><h2 class="h5 mb-1">Entre como líder</h2><p class="text-secondary mb-0">Recorra el tablero de una líder de ejemplo con 18 referidos: estados, filtros y puestos de votación.</p></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="presentacion/index.html" class="card opcion h-100 shadow-sm text-decoration-none text-body">
+              <div class="card-body p-4 d-flex flex-column gap-3">
+                <div class="icono"><i class="bi bi-easel"></i></div>
+                <div><h2 class="h5 mb-1">Vea la presentación</h2><p class="text-secondary mb-0">Todas las páginas de la aplicación explicadas, en celular y computador.</p></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="landing-ejemplo.html" class="card opcion h-100 shadow-sm text-decoration-none text-body">
+              <div class="card-body p-4 d-flex flex-column gap-3">
+                <div class="icono"><i class="bi bi-window"></i></div>
+                <div><h2 class="h5 mb-1">Página de ejemplo para su grupo</h2><p class="text-secondary mb-0">Un borrador de página de presentación con el registro integrado.</p></div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <p class="mt-4 mb-5"><a href="presentacion/registro-red-de-votantes.pdf" class="btn btn-outline-primary"><i class="bi bi-file-earmark-pdf"></i> Descargar la presentación en PDF</a></p>
+
+        <h2 class="h4 mb-3">Contacto</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="card h-100"><div class="card-body">
+              <span class="etiqueta text-primary">Líder y contacto comercial</span>
+              <h3 class="h5 mt-1">Maria Edilma Ruiz</h3>
+              <p class="mb-1"><a href="https://wa.me/573142952734" class="text-decoration-none"><i class="bi bi-whatsapp"></i> +57 314 295 2734</a></p>
+              <p class="mb-0"><a href="mailto:mervconta@gmail.com" class="text-decoration-none"><i class="bi bi-envelope"></i> mervconta@gmail.com</a></p>
+            </div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100"><div class="card-body">
+              <span class="etiqueta text-primary">Desarrollo y soporte</span>
+              <h3 class="h5 mt-1">Diego Felipe Lopez Ruiz</h3>
+              <p class="mb-1"><a href="https://wa.me/573005303452" class="text-decoration-none"><i class="bi bi-whatsapp"></i> +57 300 530 3452</a></p>
+              <p class="mb-1"><a href="mailto:dfelo93@gmail.com" class="text-decoration-none"><i class="bi bi-envelope"></i> dfelo93@gmail.com</a></p>
+              <p class="mb-0"><a href="https://www.linkedin.com/in/diegoflopezr" class="text-decoration-none"><i class="bi bi-linkedin"></i> linkedin.com/in/diegoflopezr</a></p>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center text-secondary small pb-4 px-3">
+    Registro red de votantes no está afiliado a la Registraduría Nacional del Estado Civil.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro red de votantes · Portafolio</title>
+<meta name="description" content="Construya su red de apoyo y compruebe, de forma automática, que cada persona registrada puede votar y dónde vota.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  /* Vertical 9:16 pages so the PDF reads well on a phone.
+     Colors and type follow the app (Bootstrap 5.3 blue, system font);
+     layout follows the Muchos Monachos training deck (pill label, framed phone). */
+  :root {
+    --azul: #0d6efd;
+    --azul-osc: #0a58ca;
+    --azul-suave: #e7f1ff;
+    --tinta: #212529;
+    --gris: #6c757d;
+    --fondo: #f8f9fa;
+    --linea: #dee2e6;
+    --marco: #1f2328;
+    --verde: #198754;
+    --amarillo: #ffc107;
+    --rojo: #dc3545;
+    --info: #0dcaf0;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+    color-scheme: light;
+  }
+  @page { size: 720px 1280px; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: var(--font); color: var(--tinta); background: #ced4da; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* ---------- Page shell ---------- */
+  .page {
+    width: 720px; height: 1280px; position: relative; overflow: hidden;
+    background: #fff; padding: 60px 56px 92px;
+    display: flex; flex-direction: column; gap: 26px;
+    break-after: page; page-break-after: always;
+  }
+  .page:last-of-type { break-after: auto; page-break-after: auto; }
+  .pie {
+    position: absolute; left: 56px; right: 56px; bottom: 34px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 15px; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 14px;
+  }
+  .pie b { color: var(--azul); font-weight: 600; }
+
+  /* ---------- Type ---------- */
+  .etiqueta {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: 8px;
+    background: var(--azul-suave); color: var(--azul-osc);
+    font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 7px 16px; border-radius: 999px;
+  }
+  .etiqueta.prox { background: #fff3cd; color: #664d03; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+  h2 { font-size: 44px; line-height: 1.1; letter-spacing: -.01em; }
+  h3 { font-size: 25px; line-height: 1.2; }
+  .lead { font-size: 23px; line-height: 1.45; color: var(--gris); margin: 0; }
+  .lead strong, p strong { color: var(--tinta); }
+  .cab { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ---------- Device frames ---------- */
+  .escena { position: relative; height: 545px; flex: none; }
+  .laptop { position: absolute; left: 0; top: 0; width: 520px; }
+  .laptop .pantalla { border: 12px solid var(--marco); border-bottom-width: 16px; border-radius: 18px 18px 0 0; background: #fff; overflow: hidden; }
+  .laptop .pantalla img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .laptop .base { height: 20px; margin: 0 -34px; border-radius: 0 0 16px 16px; background: linear-gradient(#d0d4d9, #a8aeb5); position: relative; }
+  .laptop .base::before { content: ""; position: absolute; left: 50%; top: 0; width: 90px; height: 7px; margin-left: -45px; border-radius: 0 0 8px 8px; background: #8f969e; }
+  .phone {
+    position: absolute; right: 0; top: 108px; width: 210px;
+    border: 9px solid var(--marco); border-radius: 34px; background: #fff; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(33, 37, 41, .28);
+  }
+  .phone img { display: block; width: 100%; aspect-ratio: 390 / 844; object-fit: cover; object-position: top; }
+  .laptop { filter: drop-shadow(0 14px 26px rgba(33, 37, 41, .18)); }
+  .escena .rotulo {
+    position: absolute; font-size: 14px; font-weight: 600; color: var(--gris);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* ---------- Lists and cards ---------- */
+  .puntos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .puntos li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; font-size: 21px; line-height: 1.4; }
+  .puntos li i { color: var(--azul); font-size: 22px; line-height: 1.35; }
+  .tarjeta { border: 1px solid var(--linea); border-radius: 18px; padding: 22px 24px; display: grid; grid-template-columns: 58px 1fr; gap: 18px; align-items: start; background: #fff; }
+  .icono { width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center; background: var(--azul-suave); color: var(--azul); font-size: 28px; }
+  .tarjeta p { margin: 6px 0 0; font-size: 19px; line-height: 1.45; color: var(--gris); }
+  .nota { background: var(--fondo); border: 1px solid var(--linea); border-radius: 14px; padding: 16px 20px; font-size: 18px; line-height: 1.45; color: var(--gris); display: grid; grid-template-columns: 26px 1fr; gap: 10px; }
+  .nota i { color: var(--azul); font-size: 20px; }
+
+  /* Bootstrap-like status badges, drawn in HTML so they stay sharp */
+  .badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 15px; font-weight: 700; color: #fff; padding: 5px 10px; border-radius: 7px; }
+  .b-verde { background: var(--verde); }
+  .b-amarillo { background: var(--amarillo); color: var(--tinta); }
+  .b-info { background: var(--info); color: var(--tinta); }
+  .b-gris { background: var(--gris); }
+  .b-rojo { background: var(--rojo); }
+
+  /* ---------- Cover ---------- */
+  .portada { padding-top: 0; }
+  .portada .barra { margin: 0 -56px; padding: 22px 56px; background: var(--azul); color: #fff; font-size: 22px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+  .portada .barra i { font-size: 28px; opacity: .85; }
+  .logo-ph { width: 104px; height: 104px; border: 3px dashed #adb5bd; border-radius: 26px; display: grid; place-items: center; text-align: center; font-size: 14px; font-weight: 700; letter-spacing: .08em; color: var(--gris); line-height: 1.2; }
+  .portada h1 { font-size: 66px; line-height: 1.02; letter-spacing: -.02em; }
+  .portada h1 span { color: var(--azul); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--linea); border-radius: 999px; padding: 8px 16px; font-size: 17px; font-weight: 600; color: var(--tinta); background: #fff; }
+  .chip i { color: var(--azul); }
+
+  /* ---------- How it works ---------- */
+  .pasos { display: flex; flex-direction: column; gap: 18px; }
+  .paso { display: grid; grid-template-columns: 64px 1fr 118px; gap: 20px; align-items: center; border: 1px solid var(--linea); border-radius: 20px; padding: 16px 20px; }
+  .num { width: 64px; height: 64px; border-radius: 50%; background: var(--azul); color: #fff; font-size: 30px; font-weight: 700; display: grid; place-items: center; box-shadow: 0 8px 20px rgba(13, 110, 253, .35); }
+  .paso h3 { font-size: 24px; }
+  .paso p { margin: 6px 0 0; font-size: 18px; line-height: 1.4; color: var(--gris); }
+  .mini { width: 118px; border: 5px solid var(--marco); border-radius: 18px; overflow: hidden; }
+  .mini img { display: block; width: 100%; aspect-ratio: 390 / 600; object-fit: cover; object-position: top; }
+  .mini.abajo img { object-position: bottom; }
+
+  /* ---------- Validation timeline ---------- */
+  .duo { display: grid; grid-template-columns: 1fr 52px 1fr; align-items: center; gap: 8px; }
+  .duo figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .duo .phone { position: static; width: 196px; }
+  .duo .phone img { aspect-ratio: 390 / 700; object-position: bottom; }
+  .duo figcaption { font-size: 17px; text-align: center; color: var(--gris); line-height: 1.35; }
+  .duo .flecha { font-size: 40px; color: var(--azul); text-align: center; }
+  .linea-tiempo { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+  .linea-tiempo li { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; padding-bottom: 16px; }
+  .linea-tiempo li::before { content: ""; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: var(--linea); }
+  .linea-tiempo li:last-child::before { display: none; }
+  .linea-tiempo .n { width: 40px; height: 40px; border-radius: 50%; background: var(--azul-suave); color: var(--azul-osc); font-weight: 700; font-size: 19px; display: grid; place-items: center; }
+  .linea-tiempo b { font-size: 20px; display: block; }
+  .linea-tiempo span { font-size: 18px; line-height: 1.42; color: var(--gris); }
+
+  /* ---------- Status table ---------- */
+  .estados { display: flex; flex-direction: column; border: 1px solid var(--linea); border-radius: 18px; overflow: hidden; }
+  .estado { display: grid; grid-template-columns: 178px 1fr; gap: 18px; padding: 16px 20px; align-items: start; }
+  .estado + .estado { border-top: 1px solid var(--linea); }
+  .estado p { margin: 0; font-size: 18px; line-height: 1.4; }
+  .estado p + p { margin-top: 4px; color: var(--gris); font-size: 17px; }
+
+  /* ---------- Real results ---------- */
+  .cifra { display: flex; align-items: baseline; gap: 18px; }
+  .cifra .grande { font-size: 112px; font-weight: 800; line-height: .9; color: var(--azul); letter-spacing: -.03em; }
+  .cifra .de { font-size: 26px; font-weight: 600; line-height: 1.25; }
+  .barra-18 { display: grid; grid-template-columns: repeat(18, 1fr); gap: 4px; }
+  .barra-18 span { height: 46px; border-radius: 6px; }
+  .s-verde { background: var(--verde); }
+  .s-gris { background: #adb5bd; }
+  .s-osc { background: #495057; }
+  .s-amarillo { background: var(--amarillo); }
+  .leyenda { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .leyenda div { display: grid; grid-template-columns: 22px 34px 1fr; gap: 12px; align-items: center; font-size: 20px; }
+  .leyenda .c { width: 22px; height: 22px; border-radius: 5px; }
+  .leyenda strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Coming soon ---------- */
+  .plan { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .plan .tarjeta { grid-template-columns: 1fr; gap: 12px; border-style: dashed; border-color: #adb5bd; }
+  .plan .icono { background: #fff3cd; color: #997404; }
+  .hoy { border-radius: 18px; background: var(--azul-suave); padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .hoy h3 { color: var(--azul-osc); font-size: 22px; }
+  .hoy ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; font-size: 18px; }
+  .hoy li { display: flex; gap: 8px; }
+  .hoy i { color: var(--verde); }
+
+  /* ---------- Landing ---------- */
+  .landing { display: grid; grid-template-columns: 1fr 200px; gap: 22px; align-items: start; }
+  .navegador { border: 1px solid #adb5bd; border-radius: 12px; overflow: hidden; box-shadow: 0 14px 30px rgba(33, 37, 41, .16); }
+  .navegador .tope { height: 30px; background: #e9ecef; display: flex; align-items: center; gap: 7px; padding: 0 12px; }
+  .navegador .tope span { width: 11px; height: 11px; border-radius: 50%; background: #adb5bd; }
+  .navegador img { display: block; width: 100%; }
+  .landing .phone { position: static; width: 200px; }
+  .landing .phone img { aspect-ratio: 390 / 900; }
+
+  /* ---------- Contact ---------- */
+  .contactos { display: flex; flex-direction: column; gap: 18px; }
+  .contacto { border: 1px solid var(--linea); border-radius: 20px; padding: 24px 26px; display: flex; flex-direction: column; gap: 10px; }
+  .contacto .rol { font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azul-osc); }
+  .contacto h3 { font-size: 30px; }
+  .contacto a { display: inline-flex; align-items: center; gap: 10px; font-size: 21px; color: var(--tinta); text-decoration: none; }
+  .contacto a i { color: var(--azul); font-size: 22px; width: 24px; }
+  .demo { display: grid; grid-template-columns: 1fr 180px; gap: 24px; align-items: center; border-radius: 20px; background: var(--azul); color: #fff; padding: 24px 26px; }
+  .demo h3 { font-size: 27px; }
+  .demo p { margin: 8px 0 0; font-size: 18px; line-height: 1.45; opacity: .92; }
+  .demo a { color: #fff; font-weight: 600; }
+  #qr { background: #fff; padding: 10px; border-radius: 12px; width: 180px; height: 180px; }
+  #qr img, #qr canvas { display: block; width: 160px !important; height: 160px !important; }
+
+  /* ---------- Screen-only viewer (GitHub Pages) ---------- */
+  .visor { display: none; }
+  @media screen {
+    body { padding-block: 20px 40px; }
+    .visor { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); margin-bottom: 20px; }
+    .visor a { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--azul-osc); text-decoration: none; font-weight: 600; font-size: 16px; padding: 10px 18px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+    .page { margin: 0 auto 24px; box-shadow: 0 6px 24px rgba(33, 37, 41, .22); }
+  }
+  /* Some PDF viewers (Preview, iOS) draw Chrome's shadow layers as solid grey
+     boxes, so the PDF uses flat frames with a hairline instead of shadows. */
+  @media print {
+    body { background: #fff; }
+    .phone, .laptop, .navegador, .num, .page { box-shadow: none !important; filter: none !important; }
+    .phone { outline: 1px solid var(--linea); outline-offset: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="visor" aria-label="Opciones">
+  <a href="registro-red-de-votantes.pdf"><i class="bi bi-file-earmark-pdf"></i> Abrir en PDF</a>
+  <a href="../index.html"><i class="bi bi-phone"></i> Probar la demo</a>
+</nav>
+
+<!-- 1 · Portada -->
+<section class="page portada">
+  <div class="barra"><span>Registro red de votantes</span><i class="bi bi-list"></i></div>
+  <div class="logo-ph">SU<br>LOGO</div>
+  <h1>Registro <span>red de votantes</span></h1>
+  <p class="lead">Construya su red de apoyo y compruebe, de forma automática, que <strong>cada persona registrada puede votar</strong> y <strong>dónde vota</strong>.</p>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/referidos-desktop.jpg" alt="Tabla de referidos en computador"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/perfil-verificado-phone.jpg" alt="Datos electorales verificados en celular"></div>
+  </div>
+  <div class="chips">
+    <span class="chip"><i class="bi bi-patch-check-fill"></i> Validación automática de cédulas</span>
+    <span class="chip"><i class="bi bi-geo-alt-fill"></i> Puesto y mesa de votación</span>
+    <span class="chip"><i class="bi bi-phone"></i> Celular y computador</span>
+  </div>
+  <div class="pie"><span>Portafolio de producto · Octubre 2026</span><span>1 / 16</span></div>
+</section>
+
+<!-- 2 · El reto -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta">El reto</span>
+    <h2>Una lista de apoyos vale poco si las cédulas no pueden votar</h2>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-journal-x"></i><span>Las listas en papel, Excel o WhatsApp se pierden, se repiten y <strong>nadie sabe cuántas personas son de verdad</strong>.</span></li>
+    <li><i class="bi bi-person-x"></i><span>Una cédula mal escrita, cancelada o que no está en el censo electoral <strong>es un voto que no llega</strong>.</span></li>
+    <li><i class="bi bi-signpost-split"></i><span>Sin saber <strong>dónde vota cada persona</strong>, es difícil organizar el día de elecciones.</span></li>
+  </ul>
+  <h3 style="margin-top:8px">Registro red de votantes lo resuelve en tres partes</h3>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-link-45deg"></i></div><div><h3>Registro con el enlace del líder</h3><p>Cada líder comparte su propio enlace. Quien se registra con él queda en su red, sin listas aparte.</p></div></div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-patch-check"></i></div><div><h3>Validación automática de la cédula</h3><p>El sistema consulta por sí solo la información pública de la Registraduría: puesto, dirección y mesa. También detecta cédulas canceladas o fuera del censo.</p></div></div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-speedometer2"></i></div><div><h3>Tablero del líder</h3><p>El líder ve en un solo lugar a toda su red: quién está verificado, quién no y por qué.</p></div></div>
+  <div class="pie"><span>Registro red de votantes</span><span>2 / 16</span></div>
+</section>
+
+<!-- 3 · Cómo funciona -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta">Cómo funciona</span>
+    <h2>De una invitación a un voto verificado, en 4 pasos</h2>
+  </div>
+  <div class="pasos">
+    <div class="paso"><div class="num">1</div><div><h3>El líder comparte su enlace</h3><p>Lo copia con un toque y lo envía por WhatsApp o redes sociales.</p></div><div class="mini"><img src="img/inicio-copiado-phone.jpg" alt=""></div></div>
+    <div class="paso"><div class="num">2</div><div><h3>La persona se registra en un minuto</h3><p>Desde su celular: cédula, nombre, celular y contraseña.</p></div><div class="mini"><img src="img/registro-lleno-phone.jpg" alt=""></div></div>
+    <div class="paso"><div class="num">3</div><div><h3>El sistema consulta la Registraduría</h3><p>De forma automática, sin que nadie digite nada.</p></div><div class="mini abajo"><img src="img/perfil-pendiente-phone.jpg" alt=""></div></div>
+    <div class="paso"><div class="num">4</div><div><h3>El líder ve quién puede votar y dónde</h3><p>Cada persona aparece con su estado y su puesto de votación.</p></div><div class="mini abajo"><img src="img/referidos-detalle-phone.jpg" alt=""></div></div>
+  </div>
+  <div class="pie"><span>Registro red de votantes</span><span>3 / 16</span></div>
+</section>
+
+<!-- 4 · Validación paso a paso -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta">El corazón del sistema</span>
+    <h2>Así se valida una cédula real</h2>
+  </div>
+  <div class="duo">
+    <figure><div class="phone"><img src="img/perfil-pendiente-phone.jpg" alt="Cédula en verificación"></div><figcaption>Justo después del registro:<br><strong>Verificando cédula…</strong></figcaption></figure>
+    <div class="flecha"><i class="bi bi-arrow-right-circle-fill"></i></div>
+    <figure><div class="phone"><img src="img/perfil-verificado-phone.jpg" alt="Cédula verificada con puesto y mesa"></div><figcaption>Pocos minutos después:<br><strong>puesto, dirección y mesa</strong></figcaption></figure>
+  </div>
+  <ol class="linea-tiempo">
+    <li><span class="n">1</span><div><b>Se registra</b><span>La persona crea su cuenta con su número de cédula. Queda en estado «Pendiente».</span></div></li>
+    <li><span class="n">2</span><div><b>Consulta automática</b><span>El sistema consulta con la Registraduría el lugar de votación de esa cédula. Nadie tiene que buscarlo a mano.</span></div></li>
+    <li><span class="n">3</span><div><b>Guarda el resultado</b><span>Departamento, municipio, puesto, dirección y mesa quedan en el perfil de la persona y en el tablero de su líder.</span></div></li>
+    <li><span class="n">4</span><div><b>Se ve sin recargar</b><span>La pantalla de la persona y la del líder se actualizan solas cada 5 segundos.</span></div></li>
+    <li><span class="n">5</span><div><b>Si algo falla, lo intenta de nuevo</b><span>Si la Registraduría no responde, el sistema vuelve a consultar solo al minuto y a los 5 minutos.</span></div></li>
+  </ol>
+  <div class="pie"><span>Registro red de votantes</span><span>4 / 16</span></div>
+</section>
+
+<!-- 5 · Estados -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta">Resultados de la validación</span>
+    <h2>Lo que el líder ve de cada persona</h2>
+  </div>
+  <div class="estados">
+    <div class="estado"><span><span class="badge b-verde"><i class="bi bi-check-circle"></i> Encontrado</span></span><div><p>La cédula está habilitada y ya se conoce su puesto, dirección y mesa.</p><p>Esa persona puede votar.</p></div></div>
+    <div class="estado"><span><span class="badge b-amarillo"><i class="bi bi-arrow-repeat"></i> Pendiente</span></span><div><p>La consulta está en curso.</p><p>Se actualiza sola; no hay que hacer nada.</p></div></div>
+    <div class="estado"><span><span class="badge b-gris"><i class="bi bi-dash-circle"></i> No encontrado</span></span><div><p>La cédula no aparece en el censo electoral.</p><p>Conviene revisar que esté bien escrita o que la persona inscriba su cédula.</p></div></div>
+    <div class="estado"><span><span class="badge b-gris"><i class="bi bi-dash-circle"></i> Cancelada</span></span><div><p>La Registraduría reporta la cédula cancelada, por ejemplo por fallecimiento.</p><p>Se muestra el motivo. No suma un voto.</p></div></div>
+    <div class="estado"><span><span class="badge b-rojo"><i class="bi bi-x-circle"></i> Error</span></span><div><p>La consulta no se completó después de 3 intentos.</p><p>El líder la vuelve a consultar con un clic.</p></div></div>
+  </div>
+  <div class="escena" style="height:360px">
+    <div class="laptop" style="left:44px"><div class="pantalla"><img src="img/referidos-desktop.jpg" alt="Estados en la tabla de referidos"></div><div class="base"></div></div>
+  </div>
+  <div class="pie"><span>Registro red de votantes</span><span>5 / 16</span></div>
+</section>
+
+<!-- 6 · Crear cuenta -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-person-plus"></i> Página · Crear cuenta</span>
+    <h2>Registrarse toma un minuto</h2>
+    <p class="lead">La persona abre el enlace que le envió su líder y llena un formulario corto.</p>
+  </div>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/registro-vacio-desktop.jpg" alt="Formulario de registro en computador"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/registro-lleno-phone.jpg" alt="Formulario de registro lleno en celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Pide solo <strong>cédula, nombre, celular y contraseña</strong>.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Revisa mientras se escribe: la cédula y el celular solo aceptan números, y lo correcto se marca en verde.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Para continuar, la persona acepta la política de tratamiento de datos.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>El registro queda unido al líder que compartió el enlace.</span></li>
+  </ul>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>6 / 16</span></div>
+</section>
+
+<!-- 7 · Iniciar sesión y contraseña -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-box-arrow-in-right"></i> Páginas · Iniciar sesión y contraseña</span>
+    <h2>Entrar es tan simple como recordar la cédula</h2>
+    <p class="lead">El usuario es la misma cédula. No hay correos ni nombres de usuario que olvidar.</p>
+  </div>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/login-desktop.jpg" alt="Inicio de sesión en computador"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/cambiar-password-phone.jpg" alt="Cambio de contraseña en celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Se entra con <strong>cédula y contraseña</strong>.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>«Recuérdame» mantiene la sesión abierta 14 días en ese celular.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Cada persona puede <strong>cambiar su contraseña</strong> desde su perfil (pantalla del celular).</span></li>
+  </ul>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>7 / 16</span></div>
+</section>
+
+<!-- 8 · Inicio -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-house"></i> Página · Inicio</span>
+    <h2>Su red y su meta, apenas entra</h2>
+    <p class="lead">Lo primero que ve cada persona es cuántas personas ha sumado y cuánto le falta para su meta.</p>
+  </div>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/inicio-desktop.jpg" alt="Página de inicio en computador"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/inicio-copiado-phone.jpg" alt="Enlace copiado en celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Contador de referidos y <strong>barra de avance</strong> hacia la meta.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Botón <strong>«Copiar link de referido»</strong> para compartir por WhatsApp. Confirma con «Enlace copiado».</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>La meta la define cada persona en su perfil.</span></li>
+  </ul>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>8 / 16</span></div>
+</section>
+
+<!-- 9 · Mi Perfil -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-person"></i> Página · Mi perfil</span>
+    <h2>Cada persona sabe dónde vota</h2>
+    <p class="lead">Además de sus datos, el perfil muestra los <strong>datos electorales</strong> que se obtuvieron de la Registraduría.</p>
+  </div>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/perfil-verificado-desktop.jpg" alt="Perfil con datos electorales en computador"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/perfil-verificado-phone.jpg" alt="Datos electorales en celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Nombre, celular y meta de referidos editables; la cédula no se puede cambiar.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span><strong>Departamento, municipio, puesto, dirección y mesa</strong>, con la fecha de la consulta.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Si la consulta falló, un botón permite intentarlo de nuevo.</span></li>
+  </ul>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>9 / 16</span></div>
+</section>
+
+<!-- 10 · Mis Referidos -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-people"></i> Página · Mis referidos</span>
+    <h2>El tablero del líder</h2>
+    <p class="lead">Toda la red en una tabla, con el estado de cada cédula y su lugar de votación.</p>
+  </div>
+  <div class="escena">
+    <div class="laptop"><div class="pantalla"><img src="img/referidos-detalle-desktop.jpg" alt="Tabla de referidos con detalle abierto"></div><div class="base"></div></div>
+    <div class="phone"><img src="img/referidos-detalle-phone.jpg" alt="Detalle electoral de un referido en celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Filtros <strong>Todos, Pendientes, Encontrados y Errores</strong>. Se puede ordenar por nombre, cédula, fecha o estado.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Al tocar a una persona se abre su <strong>puesto, dirección y mesa</strong>.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Se pueden volver a consultar <strong>hasta 10 personas a la vez</strong>, y los estados se actualizan solos.</span></li>
+  </ul>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>10 / 16</span></div>
+</section>
+
+<!-- 11 · Panel de administración -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-gear"></i> Página · Panel de administración</span>
+    <h2>Una vista completa para el equipo coordinador</h2>
+    <p class="lead">Quien administra la plataforma ve todas las cédulas registradas, de todos los líderes.</p>
+  </div>
+  <div class="escena" style="height:400px">
+    <div class="laptop" style="left:44px"><div class="pantalla"><img src="img/admin-desktop.jpg" alt="Panel de administración"></div><div class="base"></div></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Lista de todas las personas con su estado y lugar de votación.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Filtros <strong>por estado</strong> y <strong>por departamento</strong>; búsqueda por cédula.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Gestión de usuarios: dar el rol de <strong>líder</strong> a quien coordina una red.</span></li>
+  </ul>
+  <div class="nota"><i class="bi bi-info-circle"></i><span>En esta vista los datos se consultan pero no se modifican a mano: vienen siempre de la consulta automática.</span></div>
+  <div class="pie"><span>Recorrido por la aplicación</span><span>11 / 16</span></div>
+</section>
+
+<!-- 12 · Caso real -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-graph-up"></i> Caso real</span>
+    <h2>Una lista de 18 apoyos, menos votos reales</h2>
+    <p class="lead">En el primer piloto, una líder registró en la plataforma a 18 personas que apoyaban a su candidato. Sobre el papel eran 18 votos. Al validar cada cédula con la Registraduría, el resultado fue otro:</p>
+  </div>
+  <div class="cifra"><span class="grande">11</span><span class="de">de 18 cédulas registradas<br>no habrían sumado un voto</span></div>
+  <div class="barra-18" aria-label="18 registros: 4 verificados, 6 fuera del censo, 5 cancelados, 3 por volver a consultar">
+    <span class="s-verde"></span><span class="s-verde"></span><span class="s-verde"></span><span class="s-verde"></span>
+    <span class="s-gris"></span><span class="s-gris"></span><span class="s-gris"></span><span class="s-gris"></span><span class="s-gris"></span><span class="s-gris"></span>
+    <span class="s-osc"></span><span class="s-osc"></span><span class="s-osc"></span><span class="s-osc"></span><span class="s-osc"></span>
+    <span class="s-amarillo"></span><span class="s-amarillo"></span><span class="s-amarillo"></span>
+  </div>
+  <div class="leyenda">
+    <div><span class="c s-verde"></span><strong>4</strong><span>verificadas, con puesto y mesa</span></div>
+    <div><span class="c s-gris"></span><strong>6</strong><span>no aparecen en el censo electoral</span></div>
+    <div><span class="c s-osc"></span><strong>5</strong><span>cédulas canceladas (4 por fallecimiento)</span></div>
+    <div><span class="c s-amarillo"></span><strong>3</strong><span>por volver a consultar</span></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-lightbulb"></i><span>Sin la validación, la campaña habría contado con 18 votos. Los confirmados eran <strong>4, y como máximo 7</strong> si las 3 consultas pendientes salen bien.</span></li>
+    <li><i class="bi bi-lightbulb"></i><span>Con ella, la campaña conoce el <strong>tamaño real de su red</strong> antes del día de elecciones y sabe a quién contactar para corregir datos.</span></li>
+  </ul>
+  <div class="nota"><i class="bi bi-shield-lock"></i><span>Cifras reales del piloto (registros de enero y febrero de 2026), agrupadas y sin datos personales. Las pantallas de este documento usan personas ficticias.</span></div>
+  <div class="pie"><span>Registro red de votantes</span><span>12 / 16</span></div>
+</section>
+
+<!-- 13 · Próximamente -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta prox"><i class="bi bi-hourglass-split"></i> Próximamente</span>
+    <h2>Control de asistencia a encuentros</h2>
+    <p class="lead">La siguiente función en desarrollo: saber <strong>quién asiste</strong> a cada reunión, recorrido o evento.</p>
+  </div>
+  <div class="plan">
+    <div class="tarjeta"><div class="icono"><i class="bi bi-calendar-plus"></i></div><div><h3>Crear encuentros</h3><p>Con fecha, hora y lugar.</p></div></div>
+    <div class="tarjeta"><div class="icono"><i class="bi bi-person-check"></i></div><div><h3>Registrar la llegada</h3><p>Cada asistente se marca con su cédula.</p></div></div>
+    <div class="tarjeta"><div class="icono"><i class="bi bi-diagram-3"></i></div><div><h3>Asistencia por líder</h3><p>Cuántas personas de cada red llegaron.</p></div></div>
+    <div class="tarjeta"><div class="icono"><i class="bi bi-bar-chart"></i></div><div><h3>Convocados y asistentes</h3><p>Comparar a quién se invitó con quién llegó.</p></div></div>
+  </div>
+  <div class="nota"><i class="bi bi-info-circle"></i><span>Esta función está en planeación y todavía no hace parte de la aplicación.</span></div>
+  <div class="hoy">
+    <h3>Disponible hoy</h3>
+    <ul>
+      <li><i class="bi bi-check-circle-fill"></i> Registro con enlace del líder</li>
+      <li><i class="bi bi-check-circle-fill"></i> Validación automática de cédula</li>
+      <li><i class="bi bi-check-circle-fill"></i> Puesto, dirección y mesa</li>
+      <li><i class="bi bi-check-circle-fill"></i> Cédulas canceladas o fuera del censo</li>
+      <li><i class="bi bi-check-circle-fill"></i> Tablero del líder</li>
+      <li><i class="bi bi-check-circle-fill"></i> Panel de administración</li>
+    </ul>
+  </div>
+  <div class="pie"><span>Registro red de votantes</span><span>13 / 16</span></div>
+</section>
+
+<!-- 14 · Landing -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-window"></i> Borrador · Página para su grupo</span>
+    <h2>Su propia página, con el registro integrado</h2>
+    <p class="lead">Un ejemplo de cómo un grupo o campaña puede presentarse y recibir registros validados desde el primer día.</p>
+  </div>
+  <div class="landing">
+    <div class="navegador"><div class="tope"><span></span><span></span><span></span></div><img src="img/landing-desktop.jpg" alt="Borrador de página para un grupo, vista de computador"></div>
+    <div class="phone"><img src="img/landing-phone.jpg" alt="Borrador de página para un grupo, vista de celular"></div>
+  </div>
+  <ul class="puntos">
+    <li><i class="bi bi-check-circle-fill"></i><span>Presenta al grupo y sus <strong>próximos encuentros</strong>.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>El botón «Quiero registrarme» lleva al <strong>formulario conectado</strong>: cada registro llega validado a la red.</span></li>
+    <li><i class="bi bi-check-circle-fill"></i><span>Confirmar asistencia a encuentros: <strong>próximamente</strong>.</span></li>
+  </ul>
+  <div class="pie"><span>Registro red de votantes</span><span>14 / 16</span></div>
+</section>
+
+<!-- 15 · Datos -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-shield-check"></i> Confianza</span>
+    <h2>Protección de datos personales</h2>
+    <p class="lead">Una red de apoyo maneja cédulas y lugares de votación. Así los cuida la plataforma:</p>
+  </div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-file-earmark-check"></i></div><div><h3>Autorización expresa</h3><p>Nadie queda registrado sin aceptar la política de tratamiento de datos, como pide la Ley 1581 de 2012 (Habeas Data).</p></div></div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-globe2"></i></div><div><h3>Solo información pública</h3><p>El lugar de votación se obtiene de la consulta pública de la Registraduría, la misma que cualquier ciudadano puede hacer.</p></div></div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-eye-slash"></i></div><div><h3>Cada líder ve solo su red</h3><p>Un líder no puede ver a las personas registradas por otros líderes.</p></div></div>
+  <div class="tarjeta"><div class="icono"><i class="bi bi-lock"></i></div><div><h3>Contraseñas cifradas</h3><p>Se guardan de forma que nadie puede leerlas, ni siquiera quien administra la plataforma.</p></div></div>
+  <div class="nota"><i class="bi bi-info-circle"></i><span>Registro red de votantes no está afiliado a la Registraduría Nacional del Estado Civil ni cuenta con su respaldo. Cada campaña debe tener su propia política de tratamiento de datos. Este documento no es asesoría legal.</span></div>
+  <div class="pie"><span>Registro red de votantes</span><span>15 / 16</span></div>
+</section>
+
+<!-- 16 · Contacto -->
+<section class="page">
+  <div class="cab">
+    <span class="etiqueta"><i class="bi bi-chat-dots"></i> Contacto</span>
+    <h2>Hablemos de su red</h2>
+    <p class="lead">Cotización según el tamaño de su red y el número de líderes.</p>
+  </div>
+  <div class="contactos">
+    <div class="contacto">
+      <span class="rol">Líder y contacto comercial</span>
+      <h3>Maria Edilma Ruiz</h3>
+      <a href="https://wa.me/573142952734"><i class="bi bi-whatsapp"></i> +57 314 295 2734</a>
+      <a href="mailto:mervconta@gmail.com"><i class="bi bi-envelope"></i> mervconta@gmail.com</a>
+    </div>
+    <div class="contacto">
+      <span class="rol">Desarrollo y soporte</span>
+      <h3>Diego Felipe Lopez Ruiz</h3>
+      <a href="https://wa.me/573005303452"><i class="bi bi-whatsapp"></i> +57 300 530 3452</a>
+      <a href="mailto:dfelo93@gmail.com"><i class="bi bi-envelope"></i> dfelo93@gmail.com</a>
+      <a href="https://www.linkedin.com/in/diegoflopezr"><i class="bi bi-linkedin"></i> linkedin.com/in/diegoflopezr</a>
+    </div>
+  </div>
+  <div class="demo">
+    <div>
+      <h3>Pruebe la demo</h3>
+      <p>Recorra la aplicación desde su celular, con datos ficticios:<br><a href="https://0100-0100.github.io/registro-red-de-votantes/">0100-0100.github.io/<br>registro-red-de-votantes</a></p>
+    </div>
+    <div id="qr" aria-label="Código QR de la demo"></div>
+  </div>
+  <div class="pie"><span>Registro red de votantes</span><span>16 / 16</span></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  (function () {
+    var el = document.getElementById('qr');
+    if (window.QRCode && el) {
+      new QRCode(el, { text: 'https://0100-0100.github.io/registro-red-de-votantes/', width: 320, height: 320, correctLevel: QRCode.CorrectLevel.M });
+    }
+    // On a phone, shrink each 720px page to the screen width. The wide pages
+    // stretch the layout viewport, so innerWidth alone reads too wide there.
+    function fit() {
+      var width = Math.min(window.innerWidth, window.screen.width || window.innerWidth);
+      var scale = Math.min(1, (width - 16) / 720);
+      document.querySelectorAll('.page').forEach(function (p) { p.style.zoom = scale; });
+    }
+    if (!window.matchMedia('print').matches) { fit(); window.addEventListener('resize', fit); }
+  })();
+</script>
+</body>
+</html>

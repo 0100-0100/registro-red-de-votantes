@@ -1,0 +1,1797 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mis Referidos - Registro red de votantes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
+
+    
+<style>      .htmx-indicator{opacity:0}      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      </style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+</head>
+<body data-demo-page="referidos">
+<div class="demo-banner" style="background:#fff3cd;color:#664d03;font-size:.85rem;padding:.45rem 1rem;text-align:center"><strong>DEMO</strong> · Datos ficticios. Lo que escriba no se envía ni se consulta en la Registraduría. <a href="../index.html" class="link-dark fw-semibold">Menú de la demo</a></div>
+    
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="inicio.html">Registro red de votantes</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="perfil.html">
+                        <i class="bi bi-person"></i> Perfil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="referidos.html">
+                        <i class="bi bi-people"></i> Referidos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="login.html" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm ms-2">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    
+<style>
+    .detail-row { background-color: #f8f9fa; }
+    .referral-row { cursor: pointer; }
+    .toggle-icon { transition: transform 0.2s; }
+    .referral-row[aria-expanded="true"] .toggle-icon { transform: rotate(90deg); }
+    .htmx-indicator { display: none; }
+    .htmx-request .htmx-indicator { display: inline; }
+    .htmx-request .htmx-indicator-hide { display: none; }
+</style>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="referidosToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-check-circle text-success me-2"></i>
+            <strong class="me-auto">Notificacion</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            Mensaje
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-4">Mis Referidos</h4>
+
+                    
+
+                    <!-- Polling trigger for pending rows (hidden, auto-updates via HTMX) -->
+                    
+                    <div id="pending-poll-trigger" hx-get="/referidos/pending/?ids=118,119" hx-trigger="load delay:5s" hx-swap="outerHTML">
+                    </div>
+                    
+
+                    <!-- Filter Tabs -->
+                    <ul class="nav nav-pills mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-filter="all" onclick="filterTable('all')">
+                                Todos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-filter="pending" onclick="filterTable('pending')">
+                                Pendientes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-filter="found" onclick="filterTable('found')">
+                                Encontrados
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-filter="errors" onclick="filterTable('errors')">
+                                Errores
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Bulk Refresh Form -->
+                    
+                    <form id="bulk-refresh-form" hx-post="/bulk-refresh/" hx-swap="none">
+                    
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="referrals-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th></th>
+                                    <th data-sort="name" onclick="sortTable('name')" style="cursor: pointer;">
+                                        Nombre <i class="bi bi-arrow-down-up"></i>
+                                    </th>
+                                    <th data-sort="cedula" onclick="sortTable('cedula')" style="cursor: pointer;">
+                                        Cédula <i class="bi bi-arrow-down-up"></i>
+                                    </th>
+                                    <th data-sort="date" onclick="sortTable('date')" style="cursor: pointer;">
+                                        Fecha <i class="bi bi-arrow-down-up"></i>
+                                    </th>
+                                    <th data-sort="status" onclick="sortTable('status')" style="cursor: pointer;">
+                                        Estado <i class="bi bi-arrow-down-up"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-118" data-id="118" data-status="PROCESSING" data-name="Valentina Ortiz Díaz" data-date="2026-10-17" onclick="toggleDetail(118)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td onclick="event.stopPropagation();">
+        <input type="checkbox" name="ids" value="118" class="form-check-input referral-checkbox" onchange="updateBulkButton()">
+    </td>
+    
+
+    <!-- Name column -->
+    <td>Valentina Ortiz Díaz</td>
+
+    <!-- Cedula column -->
+    <td>1234500017</td>
+
+    <!-- Registration date column -->
+    <td>17/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-warning text-dark">
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Pendiente
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-118" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Processing -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-hourglass"></i>
+                    Consultando con la Registraduría Nacional...
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+            <div class="mt-3">
+                <button hx-post="/refrescar-cedula/118/" hx-target="#row-118" hx-swap="outerHTML" hx-disabled-elt="this" class="btn btn-sm btn-outline-secondary">
+                    <span class="htmx-indicator">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    </span>
+                    <span class="htmx-indicator-hide">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </span>
+                    Actualizar
+                </button>
+            </div>
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-119" data-id="119" data-status="PROCESSING" data-name="Camilo Andrés Torres" data-date="2026-10-17" onclick="toggleDetail(119)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td onclick="event.stopPropagation();">
+        <input type="checkbox" name="ids" value="119" class="form-check-input referral-checkbox" onchange="updateBulkButton()">
+    </td>
+    
+
+    <!-- Name column -->
+    <td>Camilo Andrés Torres</td>
+
+    <!-- Cedula column -->
+    <td>1234500018</td>
+
+    <!-- Registration date column -->
+    <td>17/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-warning text-dark">
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Pendiente
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-119" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Processing -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-hourglass"></i>
+                    Consultando con la Registraduría Nacional...
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+            <div class="mt-3">
+                <button hx-post="/refrescar-cedula/119/" hx-target="#row-119" hx-swap="outerHTML" hx-disabled-elt="this" class="btn btn-sm btn-outline-secondary">
+                    <span class="htmx-indicator">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    </span>
+                    <span class="htmx-indicator-hide">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </span>
+                    Actualizar
+                </button>
+            </div>
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-117" data-id="117" data-status="ERROR" data-name="Wilson Arturo León" data-date="2026-10-16" onclick="toggleDetail(117)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td onclick="event.stopPropagation();">
+        <input type="checkbox" name="ids" value="117" class="form-check-input referral-checkbox" onchange="updateBulkButton()">
+    </td>
+    
+
+    <!-- Name column -->
+    <td>Wilson Arturo León</td>
+
+    <!-- Cedula column -->
+    <td>1234500016</td>
+
+    <!-- Registration date column -->
+    <td>16/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-danger">
+                <i class="bi bi-x-circle"></i> Error
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-117" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show error hint -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    
+                        La verificación tardó demasiado. Por favor, intenta de nuevo.
+                    
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+            <div class="mt-3">
+                <button hx-post="/refrescar-cedula/117/" hx-target="#row-117" hx-swap="outerHTML" hx-disabled-elt="this" class="btn btn-sm btn-outline-secondary">
+                    <span class="htmx-indicator">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    </span>
+                    <span class="htmx-indicator-hide">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </span>
+                    Actualizar
+                </button>
+            </div>
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-116" data-id="116" data-status="CANCELLED_OTHER" data-name="Gloria Inés Cárdenas" data-date="2026-10-15" onclick="toggleDetail(116)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Gloria Inés Cárdenas</td>
+
+    <!-- Cedula column -->
+    <td>1234500015</td>
+
+    <!-- Registration date column -->
+    <td>15/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-secondary">
+                <i class="bi bi-dash-circle"></i> Cancelada
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-116" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show cancellation info -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    
+                        Cancelada por Mala Elaboración
+                    
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-115" data-id="115" data-status="CANCELLED_DECEASED" data-name="José Antonio Beltrán" data-date="2026-10-15" onclick="toggleDetail(115)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>José Antonio Beltrán</td>
+
+    <!-- Cedula column -->
+    <td>1234500014</td>
+
+    <!-- Registration date column -->
+    <td>15/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-secondary">
+                <i class="bi bi-dash-circle"></i> Cancelada
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-115" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show cancellation info -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    
+                        Cancelada por Muerte
+                    
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-114" data-id="114" data-status="NOT_FOUND" data-name="Hernán Darío Mejía" data-date="2026-10-14" onclick="toggleDetail(114)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td onclick="event.stopPropagation();">
+        <input type="checkbox" name="ids" value="114" class="form-check-input referral-checkbox" onchange="updateBulkButton()">
+    </td>
+    
+
+    <!-- Name column -->
+    <td>Hernán Darío Mejía</td>
+
+    <!-- Cedula column -->
+    <td>1234500013</td>
+
+    <!-- Registration date column -->
+    <td>14/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-secondary">
+                <i class="bi bi-dash-circle"></i> No encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-114" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Not in census -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    Cédula no registrada en el censo electoral
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+            <div class="mt-3">
+                <button hx-post="/refrescar-cedula/114/" hx-target="#row-114" hx-swap="outerHTML" hx-disabled-elt="this" class="btn btn-sm btn-outline-secondary">
+                    <span class="htmx-indicator">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    </span>
+                    <span class="htmx-indicator-hide">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </span>
+                    Actualizar
+                </button>
+            </div>
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-113" data-id="113" data-status="NOT_FOUND" data-name="Paola Andrea Guzmán" data-date="2026-10-13" onclick="toggleDetail(113)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td onclick="event.stopPropagation();">
+        <input type="checkbox" name="ids" value="113" class="form-check-input referral-checkbox" onchange="updateBulkButton()">
+    </td>
+    
+
+    <!-- Name column -->
+    <td>Paola Andrea Guzmán</td>
+
+    <!-- Cedula column -->
+    <td>1234500012</td>
+
+    <!-- Registration date column -->
+    <td>13/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-secondary">
+                <i class="bi bi-dash-circle"></i> No encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-113" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Not in census -->
+                <p class="text-muted mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    Cédula no registrada en el censo electoral
+                </p>
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+            <div class="mt-3">
+                <button hx-post="/refrescar-cedula/113/" hx-target="#row-113" hx-swap="outerHTML" hx-disabled-elt="this" class="btn btn-sm btn-outline-secondary">
+                    <span class="htmx-indicator">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    </span>
+                    <span class="htmx-indicator-hide">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </span>
+                    Actualizar
+                </button>
+            </div>
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-112" data-id="112" data-status="ACTIVE" data-name="Óscar Iván Peña" data-date="2026-10-12" onclick="toggleDetail(112)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Óscar Iván Peña</td>
+
+    <!-- Cedula column -->
+    <td>1234500011</td>
+
+    <!-- Registration date column -->
+    <td>12/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-112" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">SALON COMUNAL EL SALITRE</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">AV 68 # 24-05</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">1</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-12T22:52:00+00:00">12/10/2026, 5:52:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-111" data-id="111" data-status="ACTIVE" data-name="Claudia Yaneth Ríos" data-date="2026-10-10" onclick="toggleDetail(111)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Claudia Yaneth Ríos</td>
+
+    <!-- Cedula column -->
+    <td>1234500010</td>
+
+    <!-- Registration date column -->
+    <td>10/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-111" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">PARQUE CENTRAL KENNEDY</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 41 SUR # 78-30</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">8</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-10T19:27:00+00:00">10/10/2026, 2:27:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-110" data-id="110" data-status="ACTIVE" data-name="Luis Fernando Quintero" data-date="2026-10-08" onclick="toggleDetail(110)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Luis Fernando Quintero</td>
+
+    <!-- Cedula column -->
+    <td>1234500009</td>
+
+    <!-- Registration date column -->
+    <td>08/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-110" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">CUNDINAMARCA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">SOACHA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO SAN MATEO</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">KR 7 # 32-18</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">6</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-09T01:32:00+00:00">8/10/2026, 8:32:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-109" data-id="109" data-status="ACTIVE" data-name="Ana María Vargas" data-date="2026-10-06" onclick="toggleDetail(109)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Ana María Vargas</td>
+
+    <!-- Cedula column -->
+    <td>1234500008</td>
+
+    <!-- Registration date column -->
+    <td>06/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-109" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO EL PORVENIR</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 38 SUR # 72-15</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">11</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-06T14:57:00+00:00">6/10/2026, 9:57:00 a. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-108" data-id="108" data-status="ACTIVE" data-name="Juan David Sánchez" data-date="2026-10-04" onclick="toggleDetail(108)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Juan David Sánchez</td>
+
+    <!-- Cedula column -->
+    <td>1234500007</td>
+
+    <!-- Registration date column -->
+    <td>04/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-108" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOYACA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">TUNJA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">INSTITUTO TECNICO DE TUNJA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 19 # 9-35</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">2</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-04T16:12:00+00:00">4/10/2026, 11:12:00 a. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-107" data-id="107" data-status="ACTIVE" data-name="Martha Lucía Herrera" data-date="2026-10-03" onclick="toggleDetail(107)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Martha Lucía Herrera</td>
+
+    <!-- Cedula column -->
+    <td>1234500006</td>
+
+    <!-- Registration date column -->
+    <td>03/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-107" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO LA ESPERANZA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">KR 80 # 12-40</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">5</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-03T21:42:00+00:00">3/10/2026, 4:42:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-106" data-id="106" data-status="ACTIVE" data-name="Carlos Alberto Niño" data-date="2026-10-02" onclick="toggleDetail(106)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Carlos Alberto Niño</td>
+
+    <!-- Cedula column -->
+    <td>1234500005</td>
+
+    <!-- Registration date column -->
+    <td>02/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-106" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">PARQUE CENTRAL KENNEDY</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 41 SUR # 78-30</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">15</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-02T17:07:00+00:00">2/10/2026, 12:07:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-105" data-id="105" data-status="ACTIVE" data-name="Sandra Milena Pardo" data-date="2026-10-01" onclick="toggleDetail(105)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Sandra Milena Pardo</td>
+
+    <!-- Cedula column -->
+    <td>1234500004</td>
+
+    <!-- Registration date column -->
+    <td>01/10/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-105" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">SALON COMUNAL EL SALITRE</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">AV 68 # 24-05</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">9</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-10-02T00:22:00+00:00">1/10/2026, 7:22:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-104" data-id="104" data-status="ACTIVE" data-name="Jorge Enrique Castillo" data-date="2026-09-30" onclick="toggleDetail(104)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Jorge Enrique Castillo</td>
+
+    <!-- Cedula column -->
+    <td>1234500003</td>
+
+    <!-- Registration date column -->
+    <td>30/09/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-104" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO EL PORVENIR</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 38 SUR # 72-15</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">3</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-09-30T13:47:00+00:00">30/9/2026, 8:47:00 a. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-103" data-id="103" data-status="ACTIVE" data-name="Diana Patricia Moreno" data-date="2026-09-29" onclick="toggleDetail(103)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Diana Patricia Moreno</td>
+
+    <!-- Cedula column -->
+    <td>1234500002</td>
+
+    <!-- Registration date column -->
+    <td>29/09/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-103" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO LA ESPERANZA</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">KR 80 # 12-40</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">12</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-09-29T23:04:00+00:00">29/9/2026, 6:04:00 p. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                                
+
+
+
+
+<!-- Main referral row -->
+<tr class="referral-row" id="row-102" data-id="102" data-status="ACTIVE" data-name="Andrés Felipe Rojas" data-date="2026-09-28" onclick="toggleDetail(102)" aria-expanded="false">
+
+    <!-- Checkbox column (only if leader and can refresh) -->
+    
+    <td></td>
+    
+
+    <!-- Name column -->
+    <td>Andrés Felipe Rojas</td>
+
+    <!-- Cedula column -->
+    <td>1234500001</td>
+
+    <!-- Registration date column -->
+    <td>28/09/2026</td>
+
+    <!-- Status badge column -->
+    <td>
+        
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Encontrado
+            </span>
+        
+        <i class="bi bi-chevron-right toggle-icon ms-2"></i>
+    </td>
+</tr>
+
+<!-- Detail row (expandable) -->
+<tr class="detail-row" id="detail-102" style="display: none;">
+    <td colspan="5">
+        <div class="p-3">
+            
+                <!-- Show voting location -->
+                <h6 class="mb-3"><i class="bi bi-geo-alt"></i> Información Electoral</h6>
+                <dl class="row mb-0">
+                    
+                    <dt class="col-sm-3">Departamento</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Municipio</dt>
+                    <dd class="col-sm-9">BOGOTA D.C.</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Puesto de votación</dt>
+                    <dd class="col-sm-9">COLEGIO EL PORVENIR</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Dirección</dt>
+                    <dd class="col-sm-9">CL 38 SUR # 72-15</dd>
+                    
+
+                    
+                    <dt class="col-sm-3">Mesa</dt>
+                    <dd class="col-sm-9">7</dd>
+                    
+                </dl>
+
+                
+                <p class="text-muted small mb-0 mt-2">
+                    <i class="bi bi-clock"></i>
+                    <span class="local-time" data-utc="2026-09-28T15:17:00+00:00">28/9/2026, 10:17:00 a. m.</span>
+                </p>
+                
+
+            
+
+            <!-- Per-referral refresh button (if leader and can refresh) -->
+            
+        </div>
+    </td>
+</tr>
+
+
+
+
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bulk Refresh Button -->
+                    
+                    <div class="mt-3">
+                        <button type="submit" id="bulk-refresh-btn" class="btn btn-primary" disabled="">
+                            <span class="htmx-indicator">
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            </span>
+                            <span class="htmx-indicator-hide">
+                                <i class="bi bi-arrow-clockwise"></i> Actualizar seleccionados</span></button>
+                    </div>
+                    </form>
+                    
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    
+<script>
+(function() {
+    'use strict';
+
+    // Get IDs of rows currently showing as pending (for polling)
+    window.getPendingRowIds = function() {
+        const pendingRows = document.querySelectorAll('.referral-row[data-status="PENDING"], .referral-row[data-status="PROCESSING"]');
+        const ids = Array.from(pendingRows).map(row => row.dataset.id);
+        return ids.join(',');
+    };
+
+    // Toggle detail row expansion
+    window.toggleDetail = function(id) {
+        const detailRow = document.getElementById('detail-' + id);
+        const mainRow = document.getElementById('row-' + id);
+
+        if (detailRow && mainRow) {
+            const isExpanded = detailRow.style.display === 'table-row';
+            detailRow.style.display = isExpanded ? 'none' : 'table-row';
+            mainRow.setAttribute('aria-expanded', !isExpanded);
+        }
+    };
+
+    // Filter table by status
+    window.filterTable = function(statusFilter) {
+        const rows = document.querySelectorAll('.referral-row');
+
+        rows.forEach(row => {
+            const status = row.dataset.status;
+            const detailRow = document.getElementById('detail-' + row.dataset.id);
+            let shouldShow = false;
+
+            if (statusFilter === 'all') {
+                shouldShow = true;
+            } else if (statusFilter === 'pending') {
+                shouldShow = ['PENDING', 'PROCESSING', 'NONE'].includes(status);
+            } else if (statusFilter === 'found') {
+                shouldShow = status === 'ACTIVE';
+            } else if (statusFilter === 'errors') {
+                shouldShow = ['ERROR', 'TIMEOUT', 'BLOCKED', 'NOT_FOUND', 'CANCELLED_DECEASED', 'CANCELLED_OTHER'].includes(status);
+            }
+
+            if (shouldShow) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+                // Collapse detail row when filtering
+                if (detailRow) {
+                    detailRow.style.display = 'none';
+                }
+                row.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Update active tab
+        document.querySelectorAll('.nav-pills .nav-link').forEach(btn => {
+            if (btn.dataset.filter === statusFilter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    };
+
+    // Sort table by column
+    let currentSortColumn = null;
+    let sortDirection = 'asc';
+
+    window.sortTable = function(column) {
+        const tbody = document.querySelector('#referrals-table tbody');
+        const rows = Array.from(document.querySelectorAll('.referral-row'));
+
+        // Toggle sort direction if clicking same column
+        if (currentSortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortDirection = 'asc';
+            currentSortColumn = column;
+        }
+
+        // Sort rows
+        rows.sort((a, b) => {
+            let aVal, bVal;
+
+            if (column === 'name') {
+                aVal = a.dataset.name.toLowerCase();
+                bVal = b.dataset.name.toLowerCase();
+            } else if (column === 'cédula') {
+                aVal = a.querySelector('td:nth-child(3)').textContent;
+                bVal = b.querySelector('td:nth-child(3)').textContent;
+            } else if (column === 'date') {
+                aVal = a.dataset.date;
+                bVal = b.dataset.date;
+            } else if (column === 'status') {
+                aVal = a.dataset.status;
+                bVal = b.dataset.status;
+            }
+
+            if (sortDirection === 'asc') {
+                return aVal > bVal ? 1 : -1;
+            } else {
+                return aVal < bVal ? 1 : -1;
+            }
+        });
+
+        // Re-append rows with their detail rows
+        rows.forEach(row => {
+            const detailRow = document.getElementById('detail-' + row.dataset.id);
+            tbody.appendChild(row);
+            if (detailRow) {
+                tbody.appendChild(detailRow);
+            }
+        });
+    };
+
+    // Update bulk refresh button state
+    window.updateBulkButton = function() {
+        const checkboxes = document.querySelectorAll('.referral-checkbox');
+        const button = document.getElementById('bulk-refresh-btn');
+
+        if (!button) return;
+
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+        if (checkedCount > 0) {
+            button.disabled = false;
+            button.querySelector('.htmx-indicator-hide').innerHTML = '<i class="bi bi-arrow-clockwise"></i> Actualizar seleccionados (' + checkedCount + ')';
+        } else {
+            button.disabled = true;
+            button.querySelector('.htmx-indicator-hide').innerHTML = '<i class="bi bi-arrow-clockwise"></i> Actualizar seleccionados';
+        }
+    };
+
+    // Copy referral URL
+    window.copyReferralUrl = function() {
+        const input = document.getElementById('referralUrlInput');
+        const button = document.getElementById('copyUrlBtn');
+
+        if (input && button) {
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i> Copiado!';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-primary');
+
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error copying: ', err);
+            });
+        }
+    };
+
+    // HTMX showToast event handler
+    document.body.addEventListener('showToast', function(evt) {
+        const toastEl = document.getElementById('referidosToast');
+        const toastBody = document.getElementById('toastMessage');
+
+        if (toastEl && toastBody) {
+            toastBody.textContent = evt.detail.message;
+            const header = toastEl.querySelector('.toast-header i');
+
+            if (evt.detail.type === 'warning') {
+                header.className = 'bi bi-exclamation-triangle text-warning me-2';
+            } else if (evt.detail.type === 'info') {
+                header.className = 'bi bi-info-circle text-info me-2';
+            } else if (evt.detail.type === 'error') {
+                header.className = 'bi bi-exclamation-circle text-danger me-2';
+            } else {
+                header.className = 'bi bi-check-circle text-success me-2';
+            }
+
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+    });
+
+    // Re-apply filter after HTMX row updates
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        // Get current active filter
+        const activeTab = document.querySelector('.nav-pills .nav-link.active');
+        if (activeTab) {
+            const currentFilter = activeTab.dataset.filter;
+            // Re-apply filter to new/updated rows
+            setTimeout(() => filterTable(currentFilter), 100);
+        }
+
+        // Update bulk button state after row swap
+        updateBulkButton();
+    });
+
+    // Convert UTC timestamps to local time on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.local-time').forEach(elem => {
+            const utcTime = elem.dataset.utc;
+            if (utcTime) {
+                try {
+                    const date = new Date(utcTime);
+                    elem.textContent = date.toLocaleString();
+                } catch (e) {
+                    console.error('Error parsing date:', e);
+                }
+            }
+        });
+    });
+
+})();
+</script>
+
+
+
+<script src="demo.js"></script>
+</body></html>

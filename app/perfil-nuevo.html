@@ -1,0 +1,383 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mi Perfil - Registro red de votantes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
+
+    
+<style>      .htmx-indicator{opacity:0}      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      </style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%230d6efd%22/%3E%3Cpath d=%22M4 8.5l2.5 2.5L12 5.5%22 stroke=%22white%22 stroke-width=%221.8%22 fill=%22none%22/%3E%3C/svg%3E">
+</head>
+<body data-demo-page="perfil-nuevo">
+<div class="demo-banner" style="background:#fff3cd;color:#664d03;font-size:.85rem;padding:.45rem 1rem;text-align:center"><strong>DEMO</strong> · Datos ficticios. Lo que escriba no se envía ni se consulta en la Registraduría. <a href="../index.html" class="link-dark fw-semibold">Menú de la demo</a></div>
+    
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="inicio.html">Registro red de votantes</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="perfil.html">
+                        <i class="bi bi-person"></i> Perfil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="referidos.html">
+                        <i class="bi bi-people"></i> Referidos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="login.html" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm ms-2">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-12">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-4">Mi Perfil</h4>
+
+                    
+
+                    <form method="post" novalidate="">
+
+                        <!-- Cedula (read-only) -->
+                        <div class="mb-3">
+                            <label class="form-label">Cédula</label>
+                            <input type="text" class="form-control-plaintext bg-light rounded px-3 py-2" value="1234500017" readonly="">
+                        </div>
+
+                        <!-- Nombre Completo -->
+                        <div class="mb-3">
+                            <label for="id_nombre_completo" class="form-label">Nombre Completo</label>
+                            <input type="text" name="nombre_completo" class="form-control" id="id_nombre_completo" placeholder="Nombre completo" value="Valentina Ortiz Díaz" maxlength="60">
+                            <div class="invalid-feedback">
+                                El nombre solo puede contener letras y espacios
+                            </div>
+                        </div>
+
+                        <!-- Telefono -->
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Teléfono</label>
+                            <input type="text" name="phone" class="form-control" id="id_phone" placeholder="Número de teléfono" value="3100000017" maxlength="10" inputmode="numeric">
+                            <div class="invalid-feedback">
+                                El teléfono debe tener 10 dígitos
+                            </div>
+                        </div>
+
+                        <!-- Meta de Referidos -->
+                        <div class="mb-3">
+                            <label for="id_referral_goal" class="form-label">Meta de Referidos</label>
+                            <input type="number" name="referral_goal" class="form-control" id="id_referral_goal" value="10" min="0">
+                            <div class="invalid-feedback">
+                                La meta debe ser mayor o igual a 0
+                            </div>
+                        </div>
+
+                        <!-- Password Change Link -->
+                        <div class="mb-4">
+                            <a href="cambiar-password.html" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-key"></i> Cambiar Contraseña
+                            </a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-lg"></i> Guardar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Datos Electorales Section -->
+            <div class="card shadow mt-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-geo-alt"></i> Datos Electorales
+                    </h5>
+                    
+
+<style>
+    .htmx-indicator { display: none; }
+    .htmx-request .htmx-indicator { display: inline; }
+    .htmx-request .htmx-indicator-hide { display: none; }
+</style>
+
+<div id="census-section" hx-get="/censo/" hx-trigger="every 5s [document.querySelector('#census-status').dataset.polling === 'true']" hx-swap="outerHTML">
+
+    
+    <!-- Polling state - verification in progress -->
+    <div id="census-status" data-polling="true">
+        <span class="badge bg-info">
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            Verificando cédula...
+        </span>
+        <p class="text-muted mb-0 mt-2">Consultando con la Registraduría Nacional. Esto puede tomar unos momentos.</p>
+    </div>
+
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="profileToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-check-circle text-success me-2"></i>
+            <strong class="me-auto">Éxito</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            Perfil actualizado correctamente
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    
+<script>
+(function() {
+    'use strict';
+
+    // Show Django messages as toasts
+    
+
+    // Debounce function - validates after user stops typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Validate nombre field (letters, spaces, accented chars only, 2-60 chars)
+    function validateNombre(input) {
+        const value = input.value.trim();
+        const isValid = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]+$/.test(value) && value.length >= 2 && value.length <= 60;
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate phone field (10 numeric digits)
+    function validatePhone(input) {
+        const value = input.value.trim();
+        const isValid = /^[0-9]{10}$/.test(value);
+        const isEmpty = value === '';
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Validate referral goal (>= 0)
+    function validateGoal(input) {
+        const value = parseInt(input.value, 10);
+        const isEmpty = input.value.trim() === '';
+        const isValid = !isNaN(value) && value >= 0;
+
+        if (isEmpty) {
+            input.classList.remove('is-invalid', 'is-valid');
+        } else if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Filter numeric input helper
+    function filterNumericInput(input, maxLength) {
+        const numericOnly = input.value.replace(/[^0-9]/g, '');
+        input.value = numericOnly.slice(0, maxLength);
+    }
+
+    // Get form fields
+    const nombreField = document.getElementById('id_nombre_completo');
+    const phoneField = document.getElementById('id_phone');
+    const goalField = document.getElementById('id_referral_goal');
+
+    // Setup nombre field (letters, spaces, Spanish accents only, max 60)
+    if (nombreField) {
+        const debouncedValidation = debounce(() => validateNombre(nombreField), 1500);
+
+        // Filter invalid characters on input
+        nombreField.addEventListener('input', function() {
+            // Remove numbers and special characters, keep letters, accents, spaces, hyphens, apostrophes
+            const filtered = this.value.replace(/[^a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]/g, '');
+            // Limit to 60 characters
+            this.value = filtered.slice(0, 60);
+            debouncedValidation();
+        });
+
+        nombreField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validateNombre(this);
+        });
+
+        // Block invalid characters on keypress
+        nombreField.addEventListener('keypress', function(e) {
+            const char = e.key;
+            // Allow letters (including accented), space, hyphen, apostrophe
+            const validChar = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]$/.test(char);
+            if (!validChar && char.length === 1) {
+                e.preventDefault();
+            }
+        });
+
+        // Handle paste - filter invalid characters
+        nombreField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = pastedText.replace(/[^a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\s'-]/g, '').slice(0, 60);
+            const currentValue = this.value;
+            const newValue = (currentValue + filtered).slice(0, 60);
+            this.value = newValue;
+            debouncedValidation();
+        });
+    }
+
+    // Setup phone field (10 numeric digits)
+    if (phoneField) {
+        const debouncedValidation = debounce(() => validatePhone(phoneField), 1500);
+
+        phoneField.addEventListener('input', function() {
+            filterNumericInput(this, 10);
+            debouncedValidation();
+        });
+
+        phoneField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validatePhone(this);
+        });
+
+        phoneField.addEventListener('keypress', function(e) {
+            if (e.key < '0' || e.key > '9') e.preventDefault();
+        });
+
+        phoneField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            this.value = (this.value + numericOnly).slice(0, 10);
+            debouncedValidation();
+        });
+    }
+
+    // Setup goal field
+    if (goalField) {
+        const debouncedValidation = debounce(() => validateGoal(goalField), 1500);
+
+        goalField.addEventListener('input', function() {
+            debouncedValidation();
+        });
+
+        goalField.addEventListener('blur', function() {
+            if (this.value.trim() !== '') validateGoal(this);
+        });
+    }
+
+    // Validate on form submit
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            if (nombreField) {
+                validateNombre(nombreField);
+                if (nombreField.classList.contains('is-invalid') || nombreField.value.trim() === '') {
+                    if (nombreField.value.trim() === '') nombreField.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (phoneField) {
+                validatePhone(phoneField);
+                if (phoneField.classList.contains('is-invalid') || phoneField.value.trim() === '') {
+                    if (phoneField.value.trim() === '') phoneField.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+
+            if (goalField) {
+                validateGoal(goalField);
+                if (goalField.classList.contains('is-invalid')) {
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    }
+
+    // Handle HTMX showToast events from HX-Trigger header
+    document.body.addEventListener('showToast', function(evt) {
+        const toastEl = document.getElementById('profileToast');
+        const toastBody = document.getElementById('toastMessage');
+        if (toastEl && toastBody) {
+            toastBody.textContent = evt.detail.message;
+            const header = toastEl.querySelector('.toast-header i');
+            if (evt.detail.type === 'warning') {
+                header.className = 'bi bi-exclamation-triangle text-warning me-2';
+            } else if (evt.detail.type === 'info') {
+                header.className = 'bi bi-info-circle text-info me-2';
+            } else {
+                header.className = 'bi bi-check-circle text-success me-2';
+            }
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+    });
+})();
+</script>
+
+
+
+<script src="demo.js"></script>
+</body></html>
